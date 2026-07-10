@@ -10,3 +10,9 @@
 ```
 dotnet add package Soenneker.Make.OpenApiClientUtil
 ```
+
+The parameterless `Get()` uses `Make:ApiKey` and `Make:ClientBaseUrl`. Pass connection values explicitly to work with multiple Make organizations or regions:
+
+```csharp
+MakeOpenApiClient tenantClient = await makeOpenApiClientUtil.Get(tenantApiKey, tenantBaseUrl);
+```

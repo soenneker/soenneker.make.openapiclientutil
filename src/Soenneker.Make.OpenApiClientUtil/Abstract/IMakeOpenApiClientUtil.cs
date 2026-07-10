@@ -16,4 +16,10 @@ public interface IMakeOpenApiClientUtil: IDisposable, IAsyncDisposable
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task containing the result of the operation.</returns>
     ValueTask<MakeOpenApiClient> Get(CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a client for a specific API key using the configured base URL.</summary>
+    ValueTask<MakeOpenApiClient> Get(string apiKey, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a client for a specific Make connection.</summary>
+    ValueTask<MakeOpenApiClient> Get(string apiKey, string baseUrl, CancellationToken cancellationToken = default);
 }
