@@ -19,7 +19,7 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
 {
     private readonly SingletonDictionary<MakeOpenApiClient> _clients;
     private readonly IMakeOpenApiHttpClient _httpClientUtil;
-    private readonly string _apiKey;
+    private readonly IConfiguration _configuration;
     private readonly string _baseUrl;
     private readonly string _authHeaderName;
     private readonly string _authHeaderValueTemplate;
@@ -27,7 +27,7 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
     public MakeOpenApiClientUtil(IMakeOpenApiHttpClient httpClientUtil, IConfiguration configuration)
     {
         _httpClientUtil = httpClientUtil;
-        _apiKey = configuration.GetValueStrict<string>("Make:ApiKey");
+        _configuration = configuration;
         _baseUrl = configuration["Make:ClientBaseUrl"] ?? "https://us1.make.com/api/v2";
         _authHeaderName = configuration["Make:AuthHeaderName"] ?? "Authorization";
         _authHeaderValueTemplate = configuration["Make:AuthHeaderValueTemplate"] ?? "Bearer {token}";
@@ -37,7 +37,7 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
     private async ValueTask<MakeOpenApiClient> CreateClient(string connectionKey, CancellationToken token)
     {
         (string apiKey, string baseUrl) = ParseConnectionKey(connectionKey);
-        HttpClient httpClient = await _httpClientUtil.Get(token).NoSync();
+        HttpClient httpClient = await _httpClientUtil.Get(apiKey, baseUrl, token).NoSync();
         string authHeaderValue = _authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
 
         var requestAdapter = new HttpClientRequestAdapter(
@@ -51,7 +51,7 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
 
     public ValueTask<MakeOpenApiClient> Get(CancellationToken cancellationToken = default)
     {
-        return Get(_apiKey, _baseUrl, cancellationToken);
+        return Get(_configuration.GetValueStrict<string>("Make:ApiKey"), _baseUrl, cancellationToken);
     }
 
     public ValueTask<MakeOpenApiClient> Get(string apiKey, CancellationToken cancellationToken = default)
