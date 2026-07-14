@@ -46,6 +46,6 @@
         <PackageReference Include="Soenneker.Dictionaries.Singletons" Version="4.0.58" />
         <PackageReference Include="Soenneker.Kiota.GenericAuthenticationProvider" Version="4.0.35" />
         <PackageReference Include="Soenneker.Make.HttpClients" Version="4.0.29" />
-        <PackageReference Include="Soenneker.Make.OpenApiClient" Version="4.0.42" />
+        <PackageReference Include="Soenneker.Make.OpenApiClient" Version="4.0.43" />
     </ItemGroup>
 </Project>
