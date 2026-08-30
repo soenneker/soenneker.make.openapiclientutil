@@ -14,7 +14,6 @@ using Soenneker.Kiota.GenericAuthenticationProvider;
 
 namespace Soenneker.Make.OpenApiClientUtil;
 
-/// <inheritdoc cref="IMakeOpenApiClientUtil"/>
 public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
 {
     private readonly SingletonDictionary<MakeOpenApiClient> _clients;
