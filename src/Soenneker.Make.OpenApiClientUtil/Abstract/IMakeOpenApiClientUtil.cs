@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 namespace Soenneker.Make.OpenApiClientUtil.Abstract;
 
 /// <summary>
-/// Exposes a cached OpenAPI client instance.
+/// Provides cached Make API clients backed by the configured HTTP provider.
 /// </summary>
-public interface IMakeOpenApiClientUtil: IDisposable, IAsyncDisposable
+public interface IMakeOpenApiClientUtil : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Returns the configured make Open API Client used by the make open api client.
+    /// Gets a client using the configured API key and base URL.
     /// </summary>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested make Open API Client.</returns>
+    /// <returns>The configured Make client.</returns>
     ValueTask<MakeOpenApiClient> Get(CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -22,15 +22,15 @@ public interface IMakeOpenApiClientUtil: IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="apiKey">API key used to authenticate the request.</param>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested make Open API Client.</returns>
+    /// <returns>The configured Make client.</returns>
     ValueTask<MakeOpenApiClient> Get(string apiKey, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets a client for a specific Make connection.
     /// </summary>
     /// <param name="apiKey">API key used to authenticate the request.</param>
-    /// <param name="baseUrl">URL of the base to target.</param>
+    /// <param name="baseUrl">Absolute Make API base URL to target.</param>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested make Open API Client.</returns>
+    /// <returns>The configured Make client.</returns>
     ValueTask<MakeOpenApiClient> Get(string apiKey, string baseUrl, CancellationToken cancellationToken = default);
 }

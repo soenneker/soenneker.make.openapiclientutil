@@ -6,7 +6,7 @@
 
 # Soenneker.Make.OpenApiClientUtil
 
-Creates and caches authenticated `MakeOpenApiClient` instances for dependency-injected applications.
+Creates and caches authenticated `MakeOpenApiClient` instances for one or more Make connections.
 
 ## Install
 
@@ -46,21 +46,7 @@ var currentUser = await make.Users.Me.GetAsync(cancellationToken: cancellationTo
 
 Use `Get(apiKey)` for per-call credentials or `Get(apiKey, baseUrl)` for another Make region. Equivalent credentials and normalized base URLs reuse the same generated client within the util's lifetime.
 
-## What you get
-
-- `IMakeOpenApiClientUtil` — Exposes a cached OpenAPI client instance.
-- `MakeOpenApiClientUtilRegistrar` — Registers the OpenAPI client utility for dependency injection.
-
-## API at a glance
-
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `IMakeOpenApiClientUtil.Get(apiKey, cancellationToken)` | Gets a client for a specific API key using the configured base URL. | A task whose result is the requested make Open API Client. |
-| `IMakeOpenApiClientUtil.Get(apiKey, baseUrl, cancellationToken)` | Gets a client for a specific Make connection. | A task whose result is the requested make Open API Client. |
-| `MakeOpenApiClientUtilRegistrar.AddMakeOpenApiClientUtilAsSingleton(services)` | Adds `MakeOpenApiClientUtil` as a singleton service. | The same service collection, so additional registrations can be chained. |
-| `MakeOpenApiClientUtilRegistrar.AddMakeOpenApiClientUtilAsScoped(services)` | Adds `MakeOpenApiClientUtil` as a scoped service. | The same service collection, so additional registrations can be chained. |
-
-## Practical notes
+## Client reuse
 
 - Scoped registration intentionally uses a singleton HTTP transport beneath the scoped util. Disposing a scope releases its generated-client cache while allowing the shared transport to remain available.
 - Singleton registration shares both generated clients and transport application-wide.

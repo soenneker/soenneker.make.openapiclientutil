@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using Soenneker.Dictionaries.Singletons;
 using Soenneker.Extensions.Configuration;
@@ -10,7 +11,6 @@ using Soenneker.Extensions.ValueTask;
 using Soenneker.Make.HttpClients.Abstract;
 using Soenneker.Make.OpenApiClientUtil.Abstract;
 using Soenneker.Make.OpenApiClient;
-using Soenneker.Kiota.GenericAuthenticationProvider;
 
 namespace Soenneker.Make.OpenApiClientUtil;
 
@@ -20,16 +20,12 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
     private readonly IMakeOpenApiHttpClient _httpClientUtil;
     private readonly IConfiguration _configuration;
     private readonly string _baseUrl;
-    private readonly string _authHeaderName;
-    private readonly string _authHeaderValueTemplate;
 
     public MakeOpenApiClientUtil(IMakeOpenApiHttpClient httpClientUtil, IConfiguration configuration)
     {
         _httpClientUtil = httpClientUtil;
         _configuration = configuration;
         _baseUrl = configuration["Make:ClientBaseUrl"] ?? "https://us1.make.com/api/v2";
-        _authHeaderName = configuration["Make:AuthHeaderName"] ?? "Authorization";
-        _authHeaderValueTemplate = configuration["Make:AuthHeaderValueTemplate"] ?? "Bearer {token}";
         _clients = new SingletonDictionary<MakeOpenApiClient>(CreateClient);
     }
 
@@ -37,10 +33,8 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
     {
         (string apiKey, string baseUrl) = ParseConnectionKey(connectionKey);
         HttpClient httpClient = await _httpClientUtil.Get(apiKey, baseUrl, token).NoSync();
-        string authHeaderValue = _authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
-
         var requestAdapter = new HttpClientRequestAdapter(
-            new GenericAuthenticationProvider(headerName: _authHeaderName, headerValue: authHeaderValue), httpClient: httpClient)
+            new AnonymousAuthenticationProvider(), httpClient: httpClient)
         {
             BaseUrl = baseUrl
         };
@@ -77,18 +71,11 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
         return (connectionKey[..separatorIndex], connectionKey[(separatorIndex + 1)..]);
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
         _clients.Dispose();
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync()
     {
         return _clients.DisposeAsync();
