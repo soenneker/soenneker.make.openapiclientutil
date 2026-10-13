@@ -45,7 +45,7 @@ public sealed class MakeOpenApiClientUtil : IMakeOpenApiClientUtil
 
     public ValueTask<MakeOpenApiClient> Get(CancellationToken cancellationToken = default)
     {
-        return Get(_configuration.GetValueStrict<string>("Make:ApiKey"), _baseUrl, cancellationToken);
+        return Get(_configuration.GetStringStrict("Make:ApiKey"), _baseUrl, cancellationToken);
     }
 
     public ValueTask<MakeOpenApiClient> Get(string apiKey, CancellationToken cancellationToken = default)
